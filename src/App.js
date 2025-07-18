@@ -42,7 +42,7 @@ function App() {
   const handleBuscarPorDescripcion = async () => {
     setRecomendacion('Pensando...');
     try {
-      const res = await fetch('https://recomendaciones-backend-0ng5.onrender.com/api/recomendaciones', {/*fetch('/api/recomendaciones',*/
+      const res = await fetch('https://recomendaciones-backend-0ng5.onrender.com/api/recomendaciones', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
