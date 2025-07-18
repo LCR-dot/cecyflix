@@ -54,14 +54,16 @@ ${busqueda}. Usa solo estas películas: ${peliculas.slice(0, 10).map(p => p.titu
 
 
       const data = await res.json();
-      setRecomendacion(data.recomendacion);
 
-      if (typeof data.recomendacion === 'string') {
+      if (data.recomendacion && typeof data.recomendacion === 'string') {
+        setRecomendacion(data.recomendacion);
+
         const seleccionadas = peliculas.filter(p =>
           data.recomendacion.toLowerCase().includes(p.titulo.toLowerCase())
         );
         setPeliculasFiltradas(seleccionadas.length > 0 ? seleccionadas : []);
       } else {
+        setRecomendacion('❌ No se recibió una recomendación válida.');
         setPeliculasFiltradas([]);
       }
 
