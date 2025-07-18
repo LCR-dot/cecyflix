@@ -42,23 +42,43 @@ function App() {
   const handleBuscarPorDescripcion = async () => {
     setRecomendacion('Pensando...');
     try {
-      const res = await fetch('https://recomendaciones-backend-0ng5.onrender.com/api/recomendaciones',{/*fetch('/api/recomendaciones',*/ 
+      const res = await fetch('https://recomendaciones-backend-0ng5.onrender.com/api/recomendaciones', {/*fetch('/api/recomendaciones',*/
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: `Dame una recomendación basada en esta descripción:
-${busqueda}. Usa solo películas de este catálogo:
-${peliculas.map(p => p.titulo).join(', ')}.`
+${busqueda}. Usa solo estas películas: ${peliculas.slice(0, 10).map(p => p.titulo).join(', ')}.`
+
         })
       });
+      
 
       const data = await res.json();
+
+      if (data.recomendacion && typeof data.recomendacion === 'string') {
+        setRecomendacion(data.recomendacion);
+
+        const seleccionadas = peliculas.filter(p =>
+          data.recomendacion.toLowerCase().includes(p.titulo.toLowerCase())
+        );
+        setPeliculasFiltradas(seleccionadas.length > 0 ? seleccionadas : []);
+      } else {
+        setRecomendacion('❌ No se recibió una recomendación válida.');
+        setPeliculasFiltradas([]);
+      }
+
+
+
+      /*const data = await res.json();
       setRecomendacion(data.recomendacion);
 
       const seleccionadas = peliculas.filter(p =>
         data.recomendacion.toLowerCase().includes(p.titulo.toLowerCase())
       );
-      setPeliculasFiltradas(seleccionadas.length > 0 ? seleccionadas : []);
+      setPeliculasFiltradas(seleccionadas.length > 0 ? seleccionadas : []);*/
+
+
+
     } catch (err) {
       console.error('Error con IA:', err);
       setRecomendacion('❌ Error al obtener recomendación IA.');
