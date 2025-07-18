@@ -22,6 +22,8 @@ router.post('/', async (req, res) => {
             }
         );
 
+        console.log(process.env.OPENROUTER_API_KEY)
+
         const recomendacion = response.data.choices[0].message.content;
         res.json({ recomendacion });
 
