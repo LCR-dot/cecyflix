@@ -1,3 +1,4 @@
+// routes/recomendaciones.js
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
@@ -10,7 +11,7 @@ router.post('/', async (req, res) => {
         const response = await axios.post(
             'https://openrouter.ai/api/v1/chat/completions',
             {
-                model: 'openai/gpt-3.5-turbo',
+                model: 'openai/gpt-3.5-turbo', // ⚠️ Usa 'openai/' no 'openrouter/'
                 messages: [{ role: 'user', content: prompt }],
             },
             {
@@ -21,15 +22,17 @@ router.post('/', async (req, res) => {
             }
         );
 
-        // 🛡️ Validar la respuesta
+        console.log(process.env.OPENROUTER_API_KEY)
+
         const recomendacion = response?.data?.choices?.[0]?.message?.content;
 
         if (!recomendacion) {
-            console.error('⚠️ Respuesta inválida de OpenRouter:', response.data);
+            console.error('Respuesta inválida de OpenRouter:', response.data);
             return res.status(500).json({ recomendacion: '❌ Error al procesar la respuesta de IA.' });
         }
 
         res.json({ recomendacion });
+
 
     } catch (error) {
         console.error('❌ Error al llamar a OpenRouter:', error?.response?.data || error.message);
