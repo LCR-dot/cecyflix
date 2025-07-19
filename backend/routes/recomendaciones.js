@@ -24,8 +24,15 @@ router.post('/', async (req, res) => {
 
         console.log(process.env.OPENROUTER_API_KEY)
 
-        const recomendacion = response.data.choices[0].message.content;
+        const recomendacion = response?.data?.choices?.[0]?.message?.content;
+
+        if (!recomendacion) {
+            console.error('Respuesta inválida de OpenRouter:', response.data);
+            return res.status(500).json({ recomendacion: '❌ Error al procesar la respuesta de IA.' });
+        }
+
         res.json({ recomendacion });
+
 
     } catch (error) {
         console.error('❌ Error al llamar a OpenRouter:', error?.response?.data || error.message);
