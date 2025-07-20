@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
             },
             {
                 headers: {
-                    Authorization: `Bearer ${apiKey}`, // ✅ corregido
+                    Authorization: `Bearer ${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}`, // ✅ corregido
                     'Content-Type': 'application/json',
                 },
             }
