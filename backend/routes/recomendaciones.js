@@ -2,36 +2,35 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-require('dotenv').config();
+require('dotenv').config(); // Asegúrate de que esto esté antes de usar process.env
 
 const apiKey = process.env.OPENROUTER_API_KEY;
 
 if (!apiKey) {
-    console.error('❌ No se encontró OPENROUTER_API_KEY');
+    console.error('❌ No se encontró OPENROUTER_API_KEY. Verifica tu archivo .env o variables de entorno.');
 }
 
 router.post('/', async (req, res) => {
     const { prompt } = req.body;
 
+    if (!prompt) {
+        return res.status(400).json({ error: 'El prompt es requerido.' });
+    }
+
     try {
         const response = await axios.post(
             'https://openrouter.ai/api/v1/chat/completions',
             {
-                model: 'openai/gpt-3.5-turbo',
-                messages: [
-                    { role: 'system', content: 'Eres un recomendador de películas.' },
-                    { role: 'user', content: prompt }
-                ],
+                model: 'openrouter/openai/gpt-4o-mini', // ✅ Modelo correcto vía OpenRouter
+                messages: [{ role: 'user', content: prompt }],
             },
             {
                 headers: {
-                    Authorization: `Bearer ${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}`, // ✅ corregido
+                    Authorization: `Bearer ${apiKey}`,
                     'Content-Type': 'application/json',
                 },
             }
         );
-
-        console.log('✅ API KEY cargada:', apiKey);
 
         const recomendacion = response?.data?.choices?.[0]?.message?.content;
 
@@ -44,7 +43,8 @@ router.post('/', async (req, res) => {
 
     } catch (error) {
         console.error('❌ Error al llamar a OpenRouter:', error?.response?.data || error.message);
-        res.status(500).json({ recomendacion: '❌ Error al generar recomendación IA.' });
+        const status = error?.response?.status || 500;
+        res.status(status).json({ recomendacion: '❌ Error al generar recomendación IA.' });
     }
 });
 
